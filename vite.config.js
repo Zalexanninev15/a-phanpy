@@ -7,6 +7,7 @@ import preact from '@preact/preset-vite';
 import Sonda from 'sonda/vite';
 import { uid } from 'uid/single';
 import { createLogger, defineConfig, loadEnv } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import generateFile from 'vite-plugin-generate-file';
 import htmlPlugin from 'vite-plugin-html-config';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -118,6 +119,26 @@ export default defineConfig(({ command }) => {
       preprocessorMaxWorkers: 1,
     },
     plugins: [
+      // teleproto (MTProto for Telegram) is written for Node. Its AES-IGE
+      // encrypt path calls node:crypto's createCipheriv with no browser
+      // fallback, and MTProto gzips large responses, so crypto and zlib are
+      // not optional — without them the client fails at connect time.
+      // Only the modules actually reachable in a browser are polyfilled;
+      // fs/net/vm stay external because the code paths using them (file
+      // downloads, TCP sockets, SOCKS proxies) are never taken here.
+      nodePolyfills({
+        include: [
+          'buffer',
+          'crypto',
+          'events',
+          'os',
+          'path',
+          'stream',
+          'util',
+          'zlib',
+        ],
+        globals: { Buffer: true, process: true, global: true },
+      }),
       ...preact({
         // Force use Babel instead of ESBuild due to this change: https://github.com/preactjs/preset-vite/pull/114
         // Else, a bug will happen with importing variables from import.meta.env

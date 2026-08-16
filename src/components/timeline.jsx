@@ -673,7 +673,7 @@ function Timeline({
 export const TimelineItem = memo(
   ({
     status,
-    instance,
+    instance: timelineInstance,
     useItemID,
     // allowFilters,
     filterContext,
@@ -683,6 +683,11 @@ export const TimelineItem = memo(
     mediaFirst,
   }) => {
     const { t } = useLingui();
+    // A merged timeline holds statuses from several instances at once, so an
+    // item's own instance wins over the timeline-wide one. Everything below —
+    // permalinks and every <Status> — reads this. api({ instance }) maps an
+    // instance back to its stored account, so actions run as the right user.
+    const instance = status._instance || timelineInstance;
     console.debug('RENDER TimelineItem', status.id);
     const { id: statusID, reblog, items, type, _pinned } = status;
     if (_pinned) useItemID = false;

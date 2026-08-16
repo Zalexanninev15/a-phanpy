@@ -1,0 +1,59 @@
+
+# Optional. Delete this file if you deploy some other way, or by hand.
+#
+# Needs two repository secrets:
+#   CLOUDFLARE_API_TOKEN   (Pages: Edit permission)
+#   CLOUDFLARE_ACCOUNT_ID
+#
+# It is a separate workflow rather than a job inside ci.yml on purpose: a
+# missing secret would otherwise turn every ordinary push red.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Cloudflare Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check secrets are configured
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$ACCOUNT" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are not set."
+            echo "::error::Either add them, or delete .github/workflows/deploy.yml."
+            exit 1
+          fi
+
+      # PHANPY_WEBSITE must match the origin the site is served from, or the
+      # OAuth redirect_uri registered with each Mastodon instance won't match
+      # and login breaks in a way that is hard to read from the error.
+      - name: Build
+        env:
+          PHANPY_WEBSITE: ${{ vars.PHANPY_WEBSITE }}
+        run: npm run build
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=phanpy

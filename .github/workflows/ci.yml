@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # postinstall generates src/iconify-icons/, which the build needs.
+      # Skipping it produces a wall of "cannot find module" errors.
+      - name: Install
+        run: npm ci
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Build
+        run: npm run build
+
+      # --- Guards -----------------------------------------------------------
+      # Both failure modes below leave the build green and only surface at
+      # runtime, so they are checked against the actual output instead.
+
+      - name: MTProto must be present in the bundle
+        run: |
+          if ! grep -rq --include="*.js" "InvokeWithLayer" dist/assets/; then
+            echo "::error::teleproto is missing from the build output."
+            echo "::error::Something folded the dynamic import away — most likely"
+            echo "::error::a spread of an import() namespace in loadLib()."
+            echo "::error::See TELEGRAM.md, section about the rolldown trap."
+            exit 1
+          fi
+          echo "MTProto chunk present."
+
+      - name: MTProto must NOT be in the main chunk
+        run: |
+          MAIN=$(ls dist/assets/main-*.js | head -1)
+          SIZE=$(stat -c%s "$MAIN")
+          echo "main chunk: $((SIZE / 1024)) KB"
+          if grep -q "InvokeWithLayer" "$MAIN"; then
+            echo "::error::teleproto ended up in the main chunk."
+            echo "::error::Every user would download ~500 KB gzip they don't need."
+            echo "::error::Check that nothing imports telegram-client's lib statically."
+            exit 1
+          fi
+          # 413 KB at the time of writing; the ceiling catches accidental
+          # eager-loading long before it doubles.
+          if [ "$SIZE" -gt 716800 ]; then
+            echo "::error::main chunk grew past 700 KB — something heavy became eager."
+            exit 1
+          fi
+
+      - name: Merged timeline route must be reachable
+        run: |
+          grep -rq --include="*.js" "All accounts" dist/assets/ || {
+            echo "::error::The merged timeline strings are missing from the build."
+            exit 1
+          }
+
+      - name: Report bundle sizes
+        run: |
+          {
+            echo "| chunk | raw | gzip |"
+            echo "|---|---:|---:|"
+            for f in dist/assets/main-*.js dist/assets/teleproto-*.js dist/assets/sessions-*.js; do
+              [ -f "$f" ] || continue
+              RAW=$(( $(stat -c%s "$f") / 1024 ))
+              GZ=$(( $(gzip -c "$f" | wc -c) / 1024 ))
+              echo "| $(basename "$f") | ${RAW} KB | ${GZ} KB |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 14

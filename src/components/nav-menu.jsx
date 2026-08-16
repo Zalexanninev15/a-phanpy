@@ -190,6 +190,22 @@ function NavMenu(props) {
           </MenuLink>
           {authenticated ? (
             <>
+              <MenuLink to="/telegram/login">
+                <Icon icon="message" size="l" />{' '}
+                <span>Telegram</span>
+              </MenuLink>
+              {moreThanOneAccount && (
+                <MenuLink to="/merged">
+                  <Icon icon="group" size="l" />{' '}
+                  <span>
+                    <Trans id="merged.title">All accounts</Trans>
+                  </span>
+                </MenuLink>
+              )}
+              <MenuLink to="/telegram/login">
+                <Icon icon="message" size="l" />{' '}
+                <span>Telegram</span>
+              </MenuLink>
               {showFollowing && (
                 <MenuLink to="/following">
                   <Icon icon="following" size="l" />{' '}

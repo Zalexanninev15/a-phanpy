@@ -44,6 +44,8 @@ import Filters from './pages/filters';
 import FollowedHashtags from './pages/followed-hashtags';
 import Following from './pages/following';
 import Following2 from './pages/following2';
+import Merged from './pages/merged';
+import TelegramLogin from './pages/telegram-login';
 import Hashtag from './pages/hashtag';
 import Home from './pages/home';
 import HttpRoute from './pages/http-route';
@@ -790,6 +792,22 @@ function SecondaryRoutes() {
         element={
           <AuthRoute>
             <Following />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path="/telegram/login"
+        element={
+          <AuthRoute>
+            <TelegramLogin />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path="/merged"
+        element={
+          <AuthRoute>
+            <Merged />
           </AuthRoute>
         }
       />
