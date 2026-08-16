@@ -1,0 +1,359 @@
+#shortcuts-button {
+  position: fixed;
+  bottom: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  inset-inline-start: 16px;
+  inset-inline-start: max(16px, env(safe-area-inset-left));
+  padding: 16px;
+  background-color: var(--bg-faded-blur-color);
+  z-index: 101;
+  transition: all 0.3s ease-in-out;
+  border: var(--hairline-width) solid var(--bg-color);
+  box-shadow: 0 3px 8px -1px var(--drop-shadow-color);
+
+  body.exp-tab-bar-v2 & {
+    box-shadow:
+      inset 0 -4px 16px -8px var(--button-bg-blur-color),
+      0 3px 8px -1px var(--drop-shadow-color);
+  }
+}
+#shortcuts-button .icon {
+  transform: translateY(2px); /* Balance the icon's vertical alignment */
+}
+#app:has(#home-page):not(:has(#home-page ~ .deck-container)):has(header[hidden])
+  #shortcuts-button,
+#app:has(#home-page ~ .deck-container header[hidden]) #shortcuts-button,
+#shortcuts-button[hidden] {
+  transform: translateY(200%);
+  pointer-events: none;
+  user-select: none;
+}
+#shortcuts-button:is(:hover, :focus) {
+  background-color: var(--bg-color);
+  filter: none;
+}
+#shortcuts-button:active {
+  transform: scale(0.95);
+  transition: none;
+}
+
+@media (min-width: calc(40em + 56px + 8px)) {
+  #shortcuts-button {
+    inset-inline-end: 16px;
+    inset-inline-end: max(16px, env(safe-area-inset-right));
+    inset-inline-start: auto;
+    top: 16px;
+    top: max(16px, env(safe-area-inset-top));
+    bottom: auto;
+  }
+  #app:has(#home-page):not(:has(#home-page ~ .deck-container)):has(
+      header[hidden]
+    )
+    #shortcuts-button,
+  #app:has(#home-page ~ .deck-container header[hidden]) #shortcuts-button,
+  #shortcuts-button[hidden] {
+    transform: translateY(-200%);
+  }
+}
+
+/* TAB BAR */
+
+body.exp-tab-bar-v2 {
+  --compose-button-width: 56px;
+  --tmp-inset-sides: max(var(--sai-left), var(--sai-right), 16px);
+  --tmp-inset-bottom: max(16px, var(--sai-bottom));
+  --tmp-inset-new: calc(
+    (var(--tmp-inset-sides) + var(--tmp-inset-bottom)) / 2.4
+  );
+  --inset-new: var(--tmp-inset-new);
+}
+
+#shortcuts .tab-bar:not([hidden]) {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--bg-color);
+  /* background-color: var(--bg-blur-color);
+  backdrop-filter: blur(16px) saturate(3); */
+  border-top: var(--hairline-width) solid var(--outline-color);
+  box-shadow: 0 -8px 16px -8px var(--drop-shadow-color);
+  overflow: auto;
+  transition: all 0.3s ease-in-out;
+  padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+  user-select: none;
+  -webkit-touch-callout: none;
+
+  body.exp-tab-bar-v2 & {
+    transition:
+      all 0.3s ease-in-out,
+      max-width 0s;
+    inset-inline-end: auto;
+    --inset-inline-start: max(16px, var(--inset-new), var(--sai-inline-start));
+    --inset-inline-end: max(16px, var(--inset-new), var(--sai-inline-end));
+    inset-inline-start: var(--inset-inline-start);
+    inset-block-end: max(16px, var(--inset-new));
+    max-width: calc(
+      100vw - var(--inset-inline-start) - var(--inset-inline-end) -
+        var(--compose-button-width) - 8px
+    );
+    border-radius: 999px;
+    box-shadow:
+      0 3px 8px -1px var(--drop-shadow-color),
+      0 10px 36px -4px var(--drop-shadow-color);
+    outline: 1px solid var(--outline-color);
+    padding: 0;
+
+    @media (pointer: coarse) {
+      &:active {
+        transform: scale(1.025);
+        transition-duration: 0.1s;
+      }
+    }
+  }
+}
+body.exp-tab-bar-v2 {
+  #filters-page ~ #shortcuts .tab-bar:not([hidden]),
+  #lists-page ~ #shortcuts .tab-bar:not([hidden]) {
+    max-width: calc(
+      100vw - var(--inset-inline-start) - var(--inset-inline-end)
+    );
+  }
+}
+#shortcuts .tab-bar ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+#shortcuts .tab-bar li {
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  min-width: 20vw;
+  flex-basis: 20vw;
+
+  body.exp-tab-bar-v2 & {
+    @media (orientation: landscape) {
+      flex-grow: 0;
+      min-width: auto;
+      flex-basis: auto;
+    }
+    ~ li {
+      margin-inline-start: -3%;
+      @media (orientation: landscape) {
+        margin-inline-start: 0;
+      }
+    }
+  }
+}
+#shortcuts .tab-bar li a {
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  color: var(--text-insignificant-color);
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px;
+  text-decoration: none;
+  text-shadow: 0 var(--hairline-width) var(--bg-color);
+  width: 100%;
+
+  body.exp-tab-bar-v2 & {
+    min-height: 56px;
+    justify-content: center;
+    @media (orientation: landscape) {
+      width: auto;
+      font-size: 14px;
+      gap: 4px;
+      flex-direction: row;
+      min-height: 0;
+    }
+  }
+
+  @media (hover: hover) {
+    &:is(:hover, :focus) {
+      color: var(--text-color);
+    }
+  }
+}
+#shortcuts .tab-bar li a:active {
+  transform: scale(0.95);
+  transition: none;
+}
+#shortcuts .tab-bar li a * {
+  pointer-events: none;
+}
+#shortcuts .tab-bar li a span {
+  width: 100%;
+  text-align: center;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  body.exp-tab-bar-v2 & {
+    @media (orientation: landscape) {
+      text-align: left;
+      line-height: 1;
+    }
+  }
+}
+#shortcuts .tab-bar li a {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    border-radius: 8px;
+    @supports (corner-shape: squircle) {
+      border-radius: 16px;
+      corner-shape: squircle;
+    }
+    z-index: -1;
+    transform: scale(0.5);
+    opacity: 0;
+    transition: all 0.1s ease-in-out;
+    inset: 2px;
+    background-color: var(--bg-faded-color);
+  }
+
+  body.exp-tab-bar-v2 &:before {
+    border-radius: 999px;
+  }
+}
+#shortcuts .tab-bar li a.is-active {
+  color: var(--link-color);
+  /* background-image: radial-gradient(
+    closest-side at 50% 50%,
+    var(--bg-color),
+    transparent
+  ); */
+  &:before {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .avatar,
+  .shortcut-icon {
+    outline: 2px solid var(--link-color);
+    outline-offset: -2px;
+  }
+}
+#app:has(#home-page):not(:has(#home-page ~ .deck-container)):has(header[hidden])
+  #shortcuts
+  .tab-bar,
+#app:has(#home-page ~ .deck-container header[hidden]) #shortcuts .tab-bar,
+shortcuts .tab-bar[hidden] {
+  transform: translateY(200%);
+  pointer-events: none;
+  user-select: none;
+}
+
+#shortcuts .shortcut-icon {
+  border-radius: 9999px;
+  overflow: hidden;
+  object-fit: cover;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+@media (max-width: calc(40em - 1px)), (min-width: 40em) and (hover: none) {
+  #app[data-shortcuts-view-mode='tab-menu-bar'] .deck-container {
+    padding-bottom: 52px;
+  }
+  #shortcuts .tab-bar li a.has-subtitle .icon,
+  #shortcuts .tab-bar li a.has-subtitle .icon svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  #shortcuts .tab-bar li a span {
+    line-height: 1;
+  }
+}
+
+@media (min-width: 40em) and (hover: hover) {
+  #app[data-shortcuts-view-mode='tab-menu-bar'] .timeline-deck {
+    margin-top: 44px;
+  }
+  #app[data-shortcuts-view-mode='tab-menu-bar'] .timeline-deck > header {
+    --margin-top: calc(44px + 8px);
+  }
+  #shortcuts .tab-bar:not([hidden]) {
+    top: 0;
+    bottom: auto;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) 0
+      env(safe-area-inset-left);
+    background-color: var(--bg-faded-blur-color);
+    backdrop-filter: blur(16px);
+    border: 0;
+    box-shadow: none;
+    border-bottom: var(--hairline-width) solid var(--bg-faded-color);
+
+    body.exp-tab-bar-v2 & {
+      transition: none;
+      left: 0;
+      right: 0;
+      inset-block-end: auto;
+      border-radius: 0;
+      outline: 0;
+      max-width: none;
+      box-shadow: none;
+    }
+  }
+  #shortcuts .tab-bar ul:before {
+    content: '';
+    margin: auto;
+  }
+  #shortcuts .tab-bar ul:after {
+    content: '';
+    margin: auto;
+  }
+  #shortcuts .tab-bar li {
+    flex-grow: 0;
+    min-width: auto;
+    flex-basis: auto;
+  }
+  #shortcuts .tab-bar li a {
+    padding: 0 16px;
+    width: auto;
+    flex-direction: row;
+    font-size: 14px;
+    height: 44px;
+    gap: 4px;
+
+    &:before {
+      inset: 4px 0;
+      background-color: var(--bg-color);
+    }
+
+    body.exp-tab-bar-v2 & {
+      min-height: 0;
+      &:before {
+        inset: 4px 0;
+        border-radius: 8px;
+        background-color: var(--bg-color);
+      }
+    }
+  }
+  #shortcuts .tab-bar li a span {
+    text-align: left;
+    line-height: 1;
+  }
+  #app:has(#home-page):not(:has(#home-page ~ .deck-container)):has(
+      header[hidden]
+    )
+    #shortcuts
+    .tab-bar,
+  #app:has(#home-page ~ .deck-container header[hidden]) #shortcuts .tab-bar,
+  shortcuts .tab-bar[hidden] {
+    transform: translateY(-150%);
+    pointer-events: none;
+    user-select: none;
+  }
+}

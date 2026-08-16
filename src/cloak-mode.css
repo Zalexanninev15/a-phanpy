@@ -1,0 +1,73 @@
+body.cloak,
+.cloak {
+  a {
+    text-decoration-color: var(--link-color);
+  }
+
+  .name-text,
+  .name-text *,
+  .status .content-container,
+  .status .content-container *,
+  .status .content-compact > *,
+  .account-container .actions small,
+  .account-container :is(header, main > *:not(.actions)),
+  .account-container :is(header, main > *:not(.actions)) *,
+  .header-double-lines *,
+  .account-block,
+  .catchup-filters .filter-author *,
+  .post-peek-html *,
+  .post-peek-content > *,
+  .request-notifications-account *,
+  .status.compact-thread *,
+  .status .content-compact,
+  .bidi-isolate,
+  .should-cloak {
+    text-decoration-thickness: 1.1em;
+    text-decoration-line: line-through;
+    /* text-rendering: optimizeSpeed; */
+    filter: opacity(0.5);
+  }
+  .name-text *,
+  .status .content-container *,
+  .account-container :is(header, main > *:not(.actions)) *,
+  .post-peek-content > * {
+    filter: none;
+  }
+
+  .status :is(img, video, audio),
+  .media-post .media,
+  .avatar *,
+  .emoji,
+  .header-banner,
+  .post-peek-media {
+    filter: contrast(0) !important;
+    background-color: #000 !important;
+  }
+}
+
+/* SPECIAL CASES */
+
+@supports (display: -webkit-box) {
+  :is(body.cloak, .cloak) .card :is(.title, .meta) {
+    background-color: currentColor !important;
+  }
+}
+
+body.cloak,
+.cloak {
+  .header-double-lines *,
+  .account-container .profile-metadata b,
+  .account-container .actions small,
+  .account-container .stats *,
+  .media-container figcaption,
+  .media-container figcaption > *,
+  .catchup-filters .filter-author *,
+  .request-notifications-account * {
+    color: var(--text-color) !important;
+  }
+
+  .account-container .actions small,
+  .status .content-compact {
+    background-color: currentColor !important;
+  }
+}

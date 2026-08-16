@@ -1,0 +1,33 @@
+.name-text {
+  color: inherit;
+  text-decoration: none;
+  display: inline;
+  unicode-bidi: isolate;
+
+  b {
+    font-weight: 600;
+    unicode-bidi: isolate;
+  }
+
+  i {
+    font-variant-numeric: slashed-zero;
+    font-feature-settings: 'ss01';
+  }
+}
+.name-text.show-acct {
+  display: inline-block;
+}
+a.name-text:is(:hover, :focus) b,
+a.name-text.short:is(:hover, :focus) i {
+  text-decoration: underline;
+  text-decoration-color: var(--text-insignificant-color);
+}
+.name-text i {
+  font-style: normal;
+  opacity: 0.75;
+}
+
+.name-text .avatar {
+  vertical-align: middle;
+  transform: translateY(-0.1em);
+}

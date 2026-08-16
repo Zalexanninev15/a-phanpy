@@ -1,0 +1,62 @@
+#login {
+  padding: 16px;
+  background-image: radial-gradient(
+    closest-side at 50% 50%,
+    var(--bg-color),
+    transparent
+  );
+}
+
+#login .error {
+  color: var(--red-color);
+}
+
+#login label p {
+  margin: 0 0 0.25em 0;
+  padding: 0;
+  text-transform: uppercase;
+  font-size: 90%;
+  font-weight: bold;
+  color: var(--text-insignificant-color);
+}
+
+#login input {
+  display: block;
+  width: 15em;
+  margin: 0 auto;
+  max-width: 100%;
+  transition: all 0.2s ease-in-out;
+}
+
+#instances-suggestions {
+  margin: 0.2em 0 0;
+  padding: 0;
+  padding-inline-start: 1.2em;
+  list-style: none;
+  width: 90vw;
+  max-width: 40em;
+  overflow: auto;
+  white-space: nowrap;
+  mask-image: linear-gradient(
+    var(--to-forward),
+    transparent,
+    black 1.2em,
+    black calc(100% - 5em),
+    transparent
+  );
+  animation: fade-in 0.2s ease-in-out;
+  height: 2.5em;
+}
+#instances-suggestions li {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+#instances-eg {
+  margin: 0.2em 0 0;
+  padding: 8px;
+  height: 2.5em;
+  color: var(--text-insignificant-color);
+  font-style: italic;
+}

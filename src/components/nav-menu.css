@@ -1,0 +1,119 @@
+.nav-menu {
+  overflow: hidden;
+
+  section:last-child {
+    background-color: var(--bg-faded-color);
+    margin-bottom: -4px;
+    padding-bottom: 4px;
+
+    .szh-menu__item:before {
+      z-index: 0;
+    }
+    .szh-menu__item > * {
+      z-index: 1;
+    }
+  }
+}
+
+@media (min-width: 23em) {
+  .nav-menu {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'top top'
+      'left right';
+    padding: 0;
+    /* min-width: 22em; */
+    max-width: calc(100vw - 16px);
+  }
+  .nav-menu .top-menu {
+    grid-area: top;
+    padding-top: 4px;
+    margin-bottom: -4px;
+  }
+  .nav-menu section {
+    padding: 4px 0;
+    /* width: 50%; */
+  }
+  @keyframes phanpying {
+    0% {
+      background-position:
+        0 0,
+        0 0,
+        3em 85%;
+    }
+    100% {
+      background-position:
+        0 0,
+        0 0,
+        2em 90%;
+    }
+  }
+  .nav-menu section:last-child {
+    background-image:
+      linear-gradient(
+        var(--to-forward),
+        var(--divider-color) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom var(--backward),
+        var(--bg-blur-color),
+        transparent
+      ),
+      url(../assets/phanpy-bg.svg);
+    background-repeat: no-repeat;
+    /* background-size: auto, auto, 200%; */
+    background-position:
+      0 0,
+      0 0,
+      2em 90%;
+    background-blend-mode: normal, normal, overlay;
+    box-shadow: inset 0 0 1px var(--bg-color);
+    position: sticky;
+    top: 0;
+    animation: phanpying 0.2s ease-in-out both;
+    border-start-end-radius: inherit;
+    border-end-end-radius: inherit;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+
+    .divider-grow {
+      flex-grow: 1;
+      height: auto;
+      background-color: transparent;
+    }
+  }
+  .nav-menu section:last-child > .szh-menu__divider:first-child {
+    display: none;
+  }
+  .nav-menu .szh-menu__item span {
+    white-space: normal;
+  }
+}
+
+@media (min-width: 40em) {
+  .nav-menu {
+    width: 28em;
+  }
+}
+
+@keyframes sparkle-icon {
+  0% {
+    transform: scale(1);
+    color: var(--red-color);
+  }
+  100% {
+    transform: scale(1.2);
+    color: var(--orange-color);
+  }
+}
+.sparkle-icon {
+  animation: sparkle-icon 0.3s ease-in-out infinite alternate;
+}
+
+.nav-submenu {
+  max-width: 14em;
+}

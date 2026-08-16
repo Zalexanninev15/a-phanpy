@@ -1,0 +1,206 @@
+#shortcuts-settings-container .shortcuts-list {
+  line-height: 1.5;
+  padding: 0;
+  margin: 8px 0 0;
+  counter-reset: index;
+  border-radius: 8px;
+  overflow: hidden;
+}
+#shortcuts-settings-container .shortcuts-list li {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  gap: 4px;
+  background-color: var(--bg-faded-color);
+}
+#shortcuts-settings-container .shortcuts-list li::before {
+  content: counter(index);
+  counter-increment: index;
+  display: inline-block;
+  width: 1.2em;
+  text-align: end;
+  margin-inline-end: 8px;
+  color: var(--text-insignificant-color);
+  font-size: 90%;
+  flex-shrink: 0;
+}
+#shortcuts-settings-container .shortcuts-list li .shortcut-text {
+  flex-grow: 1;
+  min-width: 0;
+  line-height: 1;
+  word-break: break-word;
+}
+#shortcuts-settings-container .shortcuts-list li .shortcut-actions {
+  flex-shrink: 0;
+}
+
+#shortcuts-settings-container .shortcuts-view-mode {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  margin: 8px 0 0;
+}
+#shortcuts-settings-container .shortcuts-view-mode label {
+  border-radius: 4px;
+  background-color: var(--bg-faded-color);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  flex-grow: 1;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#shortcuts-settings-container .shortcuts-view-mode label:first-child {
+  border-start-start-radius: 16px;
+  border-end-start-radius: 16px;
+}
+#shortcuts-settings-container .shortcuts-view-mode label:last-child {
+  border-start-end-radius: 16px;
+  border-end-end-radius: 16px;
+}
+#shortcuts-settings-container .shortcuts-view-mode label img {
+  max-height: 64px;
+
+  &:dir(rtl) {
+    transform: scaleX(-1);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  #shortcuts-settings-container .shortcuts-view-mode label img {
+    filter: invert(0.9) hue-rotate(180deg);
+  }
+}
+#shortcuts-settings-container .shortcuts-view-mode label span {
+  text-align: center;
+  font-size: 80%;
+}
+#shortcuts-settings-container .shortcuts-view-mode label input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  perspective: 500px;
+}
+#shortcuts-settings-container .shortcuts-view-mode label input ~ * {
+  opacity: 0.5;
+  transition: opacity 0.2s ease-out;
+}
+#shortcuts-settings-container .shortcuts-view-mode label.checked {
+  box-shadow:
+    inset 0 0 0 3px var(--link-color),
+    inset 0 0 32px var(--link-faded-color);
+}
+#shortcuts-settings-container
+  .shortcuts-view-mode
+  label
+  input:is(:hover, :active, :checked)
+  ~ * {
+  opacity: 1;
+}
+
+#shortcuts-settings-container summary {
+  cursor: pointer;
+}
+
+#shortcut-settings-form form > * {
+}
+
+#shortcut-settings-form label {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+}
+#shortcut-settings-form label > span:first-child {
+  flex-basis: 5em;
+  text-align: end;
+}
+#shortcut-settings-form :is(input[type='text'], select) {
+  flex-grow: 1;
+  flex-basis: 70%;
+  flex-shrink: 1;
+  /* width: calc(100% - 32px); */
+  min-width: 0;
+  max-width: 320px;
+}
+#shortcut-settings-form .form-note {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+#shortcut-settings-form form footer {
+  display: flex;
+  gap: 16px;
+}
+
+/* Import/Export */
+
+#import-export-container input[type='text'] {
+  font-family: var(--monospace-font);
+}
+#import-export-container section {
+  margin: 8px 0;
+  background-color: var(--bg-faded-color);
+  border-radius: 16px;
+  padding: 8px;
+}
+#import-export-container section h3 {
+  margin: 0 0 8px;
+}
+#import-export-container section h3 * {
+  vertical-align: middle;
+}
+#import-export-container section p {
+  margin: 8px 0;
+
+  &.field-button {
+    display: flex;
+    gap: 4px;
+
+    button {
+      flex-shrink: 0;
+    }
+  }
+}
+#import-export-container section details > summary {
+  cursor: pointer;
+}
+#import-export-container .import-settings-list {
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 8px 0 0;
+  padding: 0;
+  counter-reset: index;
+}
+#import-export-container .import-settings-list li {
+  background-color: var(--bg-blur-color);
+  margin: 0 0 2px;
+  padding: 8px 4px;
+  display: flex;
+  gap: 4px;
+}
+#import-export-container .import-settings-list li::before {
+  content: counter(index);
+  counter-increment: index;
+  display: inline-block;
+  width: 1.2em;
+  text-align: end;
+  margin-inline-end: 8px;
+  color: var(--text-insignificant-color);
+  font-size: 90%;
+  flex-shrink: 0;
+}
+
+#import-export-container {
+  footer {
+    font-size: 90%;
+    color: var(--text-insignificant-color);
+
+    .icon {
+      vertical-align: text-bottom;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "useTabs": false,
+  "tabWidth": 2,
+  "printWidth": 80,
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+  "semi": true,
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    ".*/**",
+    "*.json",
+    "rollbar.js",
+    "src/data/**",
+    "**/*.md",
+    /* oxc_formatter_css (native since v0.57) doesn't support @keyframes entry/exit */
+    "src/components/quote-chain-modal.css"
+  ],
+  "sortImports": {
+    "groups": [
+      "side_effect_style",
+      "side_effect",
+      "polyfills",
+      "builtin",
+      "external",
+      "assets-imports",
+      "parent",
+      ["sibling", "index"]
+    ],
+    "customGroups": [
+      { "groupName": "polyfills", "elementNamePattern": ["./polyfills"] },
+      { "groupName": "assets-imports", "elementNamePattern": ["**/assets/**"] }
+    ]
+  }
+}
