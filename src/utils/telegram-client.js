@@ -19,8 +19,8 @@
 */
 
 import { createMergedTimeline } from './merge-timelines';
-import { messagesToStatuses } from './telegram-adapter';
 import store from './store';
+import { messagesToStatuses } from './telegram-adapter';
 
 const SESSION_KEY = 'telegram:session';
 const CREDS_KEY = 'telegram:credentials';
@@ -138,11 +138,16 @@ export async function startTelegramLogin({
   onError,
 }) {
   const { TelegramClient, StringSession } = await loadLib();
-  const client = new TelegramClient(new StringSession(''), Number(apiId), apiHash, {
-    useWSS: true,
-    connectionRetries: 3,
-    appVersion: '1.0.0',
-  });
+  const client = new TelegramClient(
+    new StringSession(''),
+    Number(apiId),
+    apiHash,
+    {
+      useWSS: true,
+      connectionRetries: 3,
+      appVersion: '1.0.0',
+    },
+  );
 
   await client.start({
     phoneNumber: async () => phone,
@@ -285,7 +290,10 @@ export async function createTelegramSource({ channelLimit } = {}) {
             return null;
           },
         });
-        return { value: statuses, done: messages.length < MESSAGES_PER_CHANNEL };
+        return {
+          value: statuses,
+          done: messages.length < MESSAGES_PER_CHANNEL,
+        };
       },
     };
   });

@@ -63,6 +63,11 @@ function Welcome() {
               {DEFAULT_INSTANCE ? t`Log in` : t`Log in with Mastodon`}
             </Link>
           </p>
+          <p>
+            <Link to="/telegram/login" class="button plain5">
+              {t`Continue with Telegram`}
+            </Link>
+          </p>
           {DEFAULT_INSTANCE && DEFAULT_INSTANCE_REGISTRATION_URL && (
             <p>
               <a href={DEFAULT_INSTANCE_REGISTRATION_URL} class="button plain5">

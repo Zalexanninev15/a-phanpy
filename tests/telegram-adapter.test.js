@@ -64,7 +64,10 @@ test('unknown entity types are ignored, not rendered as junk', () => {
 });
 
 test('out-of-range entity offsets are skipped rather than throwing', () => {
-  assert.equal(entitiesToHTML('abc', [e('MessageEntityBold', 10, 5)]), '<p>abc</p>');
+  assert.equal(
+    entitiesToHTML('abc', [e('MessageEntityBold', 10, 5)]),
+    '<p>abc</p>',
+  );
 });
 
 test('message maps onto a status with a sortable createdAt', () => {
@@ -83,7 +86,10 @@ test('message maps onto a status with a sortable createdAt', () => {
 });
 
 test('service messages and empty messages are dropped', () => {
-  assert.equal(messageToStatus({ _: 'MessageService', id: 1, date: 1 }, channel), null);
+  assert.equal(
+    messageToStatus({ _: 'MessageService', id: 1, date: 1 }, channel),
+    null,
+  );
   assert.equal(messageToStatus({ id: 2, message: '', date: 1 }, channel), null);
 });
 
@@ -123,9 +129,27 @@ test('video documents are typed as video', () => {
 
 test('an album collapses to one status', () => {
   const messages = [
-    { id: 1, message: 'caption', date: 3, groupedId: 555, media: { _: 'MessageMediaPhoto' } },
-    { id: 2, message: '', date: 3, groupedId: 555, media: { _: 'MessageMediaPhoto' } },
-    { id: 3, message: '', date: 3, groupedId: 555, media: { _: 'MessageMediaPhoto' } },
+    {
+      id: 1,
+      message: 'caption',
+      date: 3,
+      groupedId: 555,
+      media: { _: 'MessageMediaPhoto' },
+    },
+    {
+      id: 2,
+      message: '',
+      date: 3,
+      groupedId: 555,
+      media: { _: 'MessageMediaPhoto' },
+    },
+    {
+      id: 3,
+      message: '',
+      date: 3,
+      groupedId: 555,
+      media: { _: 'MessageMediaPhoto' },
+    },
     { id: 4, message: 'separate', date: 2 },
   ];
   const out = messagesToStatuses(messages, channel);

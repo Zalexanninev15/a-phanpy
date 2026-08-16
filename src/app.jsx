@@ -44,8 +44,6 @@ import Filters from './pages/filters';
 import FollowedHashtags from './pages/followed-hashtags';
 import Following from './pages/following';
 import Following2 from './pages/following2';
-import Merged from './pages/merged';
-import TelegramLogin from './pages/telegram-login';
 import Hashtag from './pages/hashtag';
 import Home from './pages/home';
 import HttpRoute from './pages/http-route';
@@ -53,11 +51,13 @@ import List from './pages/list';
 import Lists from './pages/lists';
 import Login from './pages/login';
 import Mentions from './pages/mentions';
+import Merged from './pages/merged';
 import Notifications from './pages/notifications';
 import Public from './pages/public';
 import ScheduledPosts from './pages/scheduled-posts';
 import Search from './pages/search';
 import StatusRoute from './pages/status-route';
+import TelegramLogin from './pages/telegram-login';
 import Trending from './pages/trending';
 import Welcome from './pages/welcome';
 import {
@@ -81,6 +81,7 @@ import {
   getVapidKey,
   setCurrentAccountID,
 } from './utils/store-utils';
+import { hasTelegramSession } from './utils/telegram-client';
 
 // Lazy load Sandbox component only in development
 const Sandbox =
@@ -666,8 +667,17 @@ function Root() {
   const isLoggedIn = useAuth();
   if (isLoggedIn) {
     __BENCHMARK.end('time-to-isLoggedIn');
+    return <Home />;
   }
-  return isLoggedIn ? <Home /> : <Welcome />;
+  // Telegram sits outside the Mastodon auth state entirely (see
+  // TelegramOrAuthRoute below), so a Telegram-only visitor — connected to
+  // Telegram, never logged into any Mastodon instance — is otherwise
+  // indistinguishable from a first-time visitor and would be shown the
+  // marketing Welcome page on every visit instead of their feed.
+  if (hasTelegramSession()) {
+    return <Merged title="Telegram" path="/" id="home" />;
+  }
+  return <Welcome />;
 }
 
 function isRootPath(pathname) {
@@ -720,6 +730,23 @@ function AuthRoute({ children }) {
     const redirectPath = location.pathname + location.search;
     store.session.set('loginRedirect', redirectPath);
     return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
+// Same as AuthRoute, but also lets in a Telegram-only session with no
+// Mastodon account at all. Used for routes — currently just /merged — that
+// make sense for either kind of login. Redirects to /welcome rather than
+// /login, since /login is specifically the Mastodon instance picker and
+// would be a dead end for someone who only wants Telegram.
+function TelegramOrAuthRoute({ children }) {
+  const isLoggedIn = useAuth();
+  const location = useLocation();
+
+  if (!isLoggedIn && !hasTelegramSession()) {
+    const redirectPath = location.pathname + location.search;
+    store.session.set('loginRedirect', redirectPath);
+    return <Navigate to="/welcome" replace />;
   }
   return children;
 }
@@ -795,20 +822,13 @@ function SecondaryRoutes() {
           </AuthRoute>
         }
       />
-      <Route
-        path="/telegram/login"
-        element={
-          <AuthRoute>
-            <TelegramLogin />
-          </AuthRoute>
-        }
-      />
+      <Route path="/telegram/login" element={<TelegramLogin />} />
       <Route
         path="/merged"
         element={
-          <AuthRoute>
+          <TelegramOrAuthRoute>
             <Merged />
-          </AuthRoute>
+          </TelegramOrAuthRoute>
         }
       />
       <Route

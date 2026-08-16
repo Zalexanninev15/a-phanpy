@@ -122,7 +122,9 @@ export function createMergedTimeline({
     for (let round = 0; round < MAX_ROUNDS_PER_PAGE; round++) {
       const needsFilling = active().filter((s) => !s.buffer.length);
       if (needsFilling.length) {
-        await Promise.all(needsFilling.map((s) => fill(s, firstLoad && !s.started)));
+        await Promise.all(
+          needsFilling.map((s) => fill(s, firstLoad && !s.started)),
+        );
       }
 
       const mark = watermark();

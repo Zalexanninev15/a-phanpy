@@ -1,9 +1,11 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'preact/hooks';
+import { useNavigate } from 'react-router-dom';
 
 import Icon from '../components/icon';
 import Link from '../components/link';
 import Loader from '../components/loader';
+import store from '../utils/store';
 import {
   clearTelegramSession,
   getStoredCredentials,
@@ -28,13 +30,19 @@ function deferred() {
 
 function TelegramLogin() {
   const { t } = useLingui();
-  useTitle(t({ id: 'telegram.login.title', message: 'Telegram' }), '/telegram/login');
+  useTitle(
+    t({ id: 'telegram.login.title', message: 'Telegram' }),
+    '/telegram/login',
+  );
+  const navigate = useNavigate();
 
   const stored = getStoredCredentials();
   const [apiId, setApiId] = useState(stored?.apiId ? String(stored.apiId) : '');
   const [apiHash, setApiHash] = useState(stored?.apiHash || '');
   const [phone, setPhone] = useState('');
-  const [step, setStep] = useState(hasTelegramSession() ? 'done' : 'credentials');
+  const [step, setStep] = useState(
+    hasTelegramSession() ? 'done' : 'credentials',
+  );
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -70,6 +78,13 @@ function TelegramLogin() {
         onError: (e) => setError(e?.message || String(e)),
       });
       setStep('done');
+      // Mirrors the Mastodon OAuth callback in app.jsx: if something sent the
+      // user here to authenticate before continuing (TelegramOrAuthRoute),
+      // send them back. Otherwise land on the merged timeline — /telegram/login
+      // itself has nothing further to show once connected.
+      const redirectPath = store.session.get('loginRedirect');
+      store.session.del('loginRedirect');
+      navigate(redirectPath || '/merged', { replace: true });
     } catch (e) {
       setError(e?.message || String(e));
       setStep('credentials');
@@ -96,7 +111,10 @@ function TelegramLogin() {
             {step === 'done' ? (
               <>
                 <p>
-                  <Trans>Telegram is connected. Channels appear in the merged timeline.</Trans>
+                  <Trans>
+                    Telegram is connected. Channels appear in the merged
+                    timeline.
+                  </Trans>
                 </p>
                 <p>
                   <button
@@ -115,16 +133,17 @@ function TelegramLogin() {
               <>
                 <p>
                   <Trans>
-                    Telegram requires your own API credentials. Create an application at
-                    my.telegram.org under "API development tools" and paste the values here.
-                    They are stored on this device only.
+                    Telegram requires your own API credentials. Create an
+                    application at my.telegram.org under "API development tools"
+                    and paste the values here. They are stored on this device
+                    only.
                   </Trans>
                 </p>
                 <p class="insignificant">
                   <Trans>
-                    Signing in to a third-party client is something Telegram sometimes
-                    treats as suspicious. There is a real chance of your account being
-                    limited or banned.
+                    Signing in to a third-party client is something Telegram
+                    sometimes treats as suspicious. There is a real chance of
+                    your account being limited or banned.
                   </Trans>
                 </p>
               </>
@@ -199,7 +218,9 @@ function TelegramLogin() {
                   type="button"
                   class="large"
                   disabled={!passwordValue}
-                  onClick={() => passwordDeferred.current?.resolve(passwordValue)}
+                  onClick={() =>
+                    passwordDeferred.current?.resolve(passwordValue)
+                  }
                 >
                   <Trans>Confirm</Trans>
                 </button>

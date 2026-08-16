@@ -15,6 +15,7 @@ import states from '../utils/states';
 import store from '../utils/store';
 import { getAccounts, getCurrentAccountID } from '../utils/store-utils';
 import supports from '../utils/supports';
+import { hasTelegramSession } from '../utils/telegram-client';
 
 import Avatar from './avatar';
 import Icon from './icon';
@@ -34,6 +35,10 @@ function NavMenu(props) {
       accounts[0];
     return [acc, accounts.length > 1];
   }, []);
+  // Recomputed on every render rather than memoized: connecting/disconnecting
+  // Telegram happens on a different page, so a memo here would go stale until
+  // an unrelated re-render happened to run past its dependency array.
+  const hasTelegram = hasTelegramSession();
 
   // Don't show avatar in nav button if profile shortcut is already showing
   const tabMenuHasProfile =
@@ -191,10 +196,9 @@ function NavMenu(props) {
           {authenticated ? (
             <>
               <MenuLink to="/telegram/login">
-                <Icon icon="message" size="l" />{' '}
-                <span>Telegram</span>
+                <Icon icon="message" size="l" /> <span>Telegram</span>
               </MenuLink>
-              {moreThanOneAccount && (
+              {(moreThanOneAccount || hasTelegram) && (
                 <MenuLink to="/merged">
                   <Icon icon="group" size="l" />{' '}
                   <span>
@@ -202,10 +206,6 @@ function NavMenu(props) {
                   </span>
                 </MenuLink>
               )}
-              <MenuLink to="/telegram/login">
-                <Icon icon="message" size="l" />{' '}
-                <span>Telegram</span>
-              </MenuLink>
               {showFollowing && (
                 <MenuLink to="/following">
                   <Icon icon="following" size="l" />{' '}
@@ -351,6 +351,17 @@ function NavMenu(props) {
           ) : (
             <>
               <MenuDivider />
+              {hasTelegram && (
+                <MenuLink to="/merged">
+                  <Icon icon="group" size="l" />{' '}
+                  <span>
+                    <Trans id="merged.title">All accounts</Trans>
+                  </span>
+                </MenuLink>
+              )}
+              <MenuLink to="/telegram/login">
+                <Icon icon="message" size="l" /> <span>Telegram</span>
+              </MenuLink>
               <MenuLink to="/login">
                 <Icon icon="user" size="l" />{' '}
                 <span>

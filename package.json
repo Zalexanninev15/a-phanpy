@@ -20,14 +20,14 @@
     "fetch-i18n-volunteers": "env $(cat .env.local | grep -v \"#\" | xargs) node scripts/fetch-i18n-volunteers.js",
     "readme:i18n-volunteers": "node scripts/update-i18n-volunteers-readme.js",
     "test": "playwright test",
+    "test:unit": "node --test tests/merge-timelines.test.js tests/telegram-adapter.test.js",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "formatting": "oxfmt --check || oxfmt",
     "formatting-check": "oxfmt --check",
     "git:po-filter": "git config --local diff.po-filter.textconv \"sed 's/:[0-9]*$//'\"",
     "postinstall": "node scripts/generate-icons.js && npx exifreader build",
-    "generate-icons": "node scripts/generate-icons.js",
-    "test:unit": "node --test tests/merge-timelines.test.js tests/telegram-adapter.test.js"
+    "generate-icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "~0.8.13",

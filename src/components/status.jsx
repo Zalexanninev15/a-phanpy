@@ -2949,43 +2949,47 @@ function Status({
                   })}
                 </div>
               )}
-              <div class={`actions ${_deleted ? 'disabled' : ''}`}>
-                <div class="action has-count">
-                  {tooManyMentions ? (
-                    <Menu2
-                      openTrigger="clickOnly"
-                      direction="bottom"
-                      overflow="auto"
-                      gap={-8}
-                      shift={8}
-                      menuClassName="menu-emphasized"
-                      menuButton={
-                        <StatusButton
-                          title={t`Reply`}
-                          alt={t`Comments`}
-                          class="reply-button"
-                          icon="comment"
-                          count={repliesCount}
-                        />
-                      }
-                    >
-                      {replyModeMenuItems}
-                    </Menu2>
-                  ) : (
-                    <StatusButton
-                      title={t`Reply`}
-                      alt={t`Comments`}
-                      class="reply-button"
-                      icon="comment"
-                      count={repliesCount}
-                      onClick={(e) => {
-                        haptics.trigger('light');
-                        replyStatus(e);
-                      }}
-                    />
-                  )}
-                </div>
-                {/* <div class="action has-count">
+              {/* Telegram channel posts are read-only: there is no reply,
+                  boost or favourite to send, and the action handlers would
+                  call api({ instance: 'telegram' }) and throw. */}
+              {status._readonly ? null : (
+                <div class={`actions ${_deleted ? 'disabled' : ''}`}>
+                  <div class="action has-count">
+                    {tooManyMentions ? (
+                      <Menu2
+                        openTrigger="clickOnly"
+                        direction="bottom"
+                        overflow="auto"
+                        gap={-8}
+                        shift={8}
+                        menuClassName="menu-emphasized"
+                        menuButton={
+                          <StatusButton
+                            title={t`Reply`}
+                            alt={t`Comments`}
+                            class="reply-button"
+                            icon="comment"
+                            count={repliesCount}
+                          />
+                        }
+                      >
+                        {replyModeMenuItems}
+                      </Menu2>
+                    ) : (
+                      <StatusButton
+                        title={t`Reply`}
+                        alt={t`Comments`}
+                        class="reply-button"
+                        icon="comment"
+                        count={repliesCount}
+                        onClick={(e) => {
+                          haptics.trigger('light');
+                          replyStatus(e);
+                        }}
+                      />
+                    )}
+                  </div>
+                  {/* <div class="action has-count">
                 <StatusButton
                   checked={reblogged}
                   title={['Boost', 'Unboost']}
@@ -2997,152 +3001,153 @@ function Status({
                   disabled={!canBoost}
                 />
               </div> */}
-                <div
-                  class={`action ${canQuote && reblogsCount > 0 && quotesCount > 0 ? 'has-counts' : 'has-count'}`}
-                >
-                  <MenuConfirm
-                    disabled={!canBoost}
-                    onClick={() => {
-                      haptics.trigger('light');
-                      return confirmBoostStatus();
-                    }}
-                    confirmLabel={
-                      <>
-                        <Icon icon="rocket" />
-                        <span class="menu-grow">
-                          {reblogged ? t`Unboost` : t`Boost`}
-                        </span>
-                        {reblogsCount > 0 && (
-                          <small class="more-insignificant">
-                            {shortenNumber(reblogsCount)}
-                          </small>
-                        )}
-                      </>
-                    }
-                    menuExtras={
-                      <>
-                        {supportsNativeQuote() && (
-                          <MenuItem
-                            disabled={quoteDisabled}
-                            onClick={() => {
-                              showCompose({
-                                quoteStatus: status,
-                              });
-                            }}
-                          >
-                            <Icon icon="quote" />
-                            {quoteMetaText ? (
-                              <small>
-                                {quoteText}
-                                <br />
-                                {quoteMetaText}
-                              </small>
-                            ) : (
-                              <span class="menu-grow">{quoteText}</span>
-                            )}
-                            {quotesCount > 0 && (
-                              <small class="more-insignificant">
-                                {shortenNumber(quotesCount)}
-                              </small>
-                            )}
-                          </MenuItem>
-                        )}
-                        {(DEV || !supportsNativeQuote()) && (
-                          <MenuItem
-                            onClick={() => {
-                              showCompose({
-                                draftStatus: {
-                                  status: `\n${url}`,
-                                },
-                              });
-                            }}
-                          >
-                            <Icon icon="quote" />
-                            <span>
-                              <Trans>Quote with link</Trans>
-                            </span>
-                            {supportsNativeQuote() && DEV && (
-                              <small class="tag collapsed">DEV</small>
-                            )}
-                          </MenuItem>
-                        )}
-                      </>
-                    }
-                    menuFooter={menuFooter}
+                  <div
+                    class={`action ${canQuote && reblogsCount > 0 && quotesCount > 0 ? 'has-counts' : 'has-count'}`}
                   >
-                    <StatusButton
-                      checked={reblogged}
-                      title={[
-                        canQuote ? t`Boost/Quote…` : t`Boost…`,
-                        t`Unboost`,
-                      ]}
-                      alt={[t`Boost`, t`Boosted`]}
-                      class="reblog-button"
-                      icon={
-                        reblogsCount <= 0 && quotesCount > 0
-                          ? 'quote'
-                          : 'rocket'
-                      }
-                      count={reblogsCount}
-                      extraCount={quotesCount}
-                      // onClick={boostStatus}
+                    <MenuConfirm
                       disabled={!canBoost}
-                    />
-                  </MenuConfirm>
-                </div>
-                <div class="action has-count">
-                  <StatusButton
-                    checked={favourited}
-                    title={[t`Like`, t`Unlike`]}
-                    alt={[t`Like`, t`Liked`]}
-                    class="favourite-button"
-                    icon="heart"
-                    count={favouritesCount}
-                    onClick={(e) => {
-                      haptics.trigger('light');
-                      favouriteStatus(e);
-                    }}
-                  />
-                </div>
-                {supports('@mastodon/post-bookmark') && (
-                  <div class="action">
+                      onClick={() => {
+                        haptics.trigger('light');
+                        return confirmBoostStatus();
+                      }}
+                      confirmLabel={
+                        <>
+                          <Icon icon="rocket" />
+                          <span class="menu-grow">
+                            {reblogged ? t`Unboost` : t`Boost`}
+                          </span>
+                          {reblogsCount > 0 && (
+                            <small class="more-insignificant">
+                              {shortenNumber(reblogsCount)}
+                            </small>
+                          )}
+                        </>
+                      }
+                      menuExtras={
+                        <>
+                          {supportsNativeQuote() && (
+                            <MenuItem
+                              disabled={quoteDisabled}
+                              onClick={() => {
+                                showCompose({
+                                  quoteStatus: status,
+                                });
+                              }}
+                            >
+                              <Icon icon="quote" />
+                              {quoteMetaText ? (
+                                <small>
+                                  {quoteText}
+                                  <br />
+                                  {quoteMetaText}
+                                </small>
+                              ) : (
+                                <span class="menu-grow">{quoteText}</span>
+                              )}
+                              {quotesCount > 0 && (
+                                <small class="more-insignificant">
+                                  {shortenNumber(quotesCount)}
+                                </small>
+                              )}
+                            </MenuItem>
+                          )}
+                          {(DEV || !supportsNativeQuote()) && (
+                            <MenuItem
+                              onClick={() => {
+                                showCompose({
+                                  draftStatus: {
+                                    status: `\n${url}`,
+                                  },
+                                });
+                              }}
+                            >
+                              <Icon icon="quote" />
+                              <span>
+                                <Trans>Quote with link</Trans>
+                              </span>
+                              {supportsNativeQuote() && DEV && (
+                                <small class="tag collapsed">DEV</small>
+                              )}
+                            </MenuItem>
+                          )}
+                        </>
+                      }
+                      menuFooter={menuFooter}
+                    >
+                      <StatusButton
+                        checked={reblogged}
+                        title={[
+                          canQuote ? t`Boost/Quote…` : t`Boost…`,
+                          t`Unboost`,
+                        ]}
+                        alt={[t`Boost`, t`Boosted`]}
+                        class="reblog-button"
+                        icon={
+                          reblogsCount <= 0 && quotesCount > 0
+                            ? 'quote'
+                            : 'rocket'
+                        }
+                        count={reblogsCount}
+                        extraCount={quotesCount}
+                        // onClick={boostStatus}
+                        disabled={!canBoost}
+                      />
+                    </MenuConfirm>
+                  </div>
+                  <div class="action has-count">
                     <StatusButton
-                      checked={bookmarked}
-                      title={[t`Bookmark`, t`Unbookmark`]}
-                      alt={[t`Bookmark`, t`Bookmarked`]}
-                      class="bookmark-button"
-                      icon="bookmark"
+                      checked={favourited}
+                      title={[t`Like`, t`Unlike`]}
+                      alt={[t`Like`, t`Liked`]}
+                      class="favourite-button"
+                      icon="heart"
+                      count={favouritesCount}
                       onClick={(e) => {
                         haptics.trigger('light');
-                        bookmarkStatus(e);
+                        favouriteStatus(e);
                       }}
                     />
                   </div>
-                )}
-                <Menu2
-                  portal={{
-                    target:
-                      document.querySelector('.status-deck') || document.body,
-                  }}
-                  align="end"
-                  gap={4}
-                  overflow="auto"
-                  viewScroll="close"
-                  menuButton={
+                  {supports('@mastodon/post-bookmark') && (
                     <div class="action">
-                      <button
-                        type="button"
-                        title={t`More`}
-                        class="plain more-button"
-                      >
-                        <Icon icon="more2" size="l" alt={t`More`} />
-                      </button>
+                      <StatusButton
+                        checked={bookmarked}
+                        title={[t`Bookmark`, t`Unbookmark`]}
+                        alt={[t`Bookmark`, t`Bookmarked`]}
+                        class="bookmark-button"
+                        icon="bookmark"
+                        onClick={(e) => {
+                          haptics.trigger('light');
+                          bookmarkStatus(e);
+                        }}
+                      />
                     </div>
-                  }
-                >
-                  {StatusMenuItems}{' '}
-                </Menu2>
-              </div>
+                  )}
+                  <Menu2
+                    portal={{
+                      target:
+                        document.querySelector('.status-deck') || document.body,
+                    }}
+                    align="end"
+                    gap={4}
+                    overflow="auto"
+                    viewScroll="close"
+                    menuButton={
+                      <div class="action">
+                        <button
+                          type="button"
+                          title={t`More`}
+                          class="plain more-button"
+                        >
+                          <Icon icon="more2" size="l" alt={t`More`} />
+                        </button>
+                      </div>
+                    }
+                  >
+                    {StatusMenuItems}{' '}
+                  </Menu2>
+                </div>
+              )}
             </>
           )}
         </div>

@@ -20,10 +20,6 @@ console.debug = () => {};
  */
 export default defineConfig({
   testDir: './tests',
-  // Only Playwright's own e2e specs. tests/*.test.js are plain node:test files
-  // run by `npm run test:unit`; some Playwright versions match *.test.js by
-  // default and would try to execute them as browser tests.
-  testMatch: '**/*.spec.js',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

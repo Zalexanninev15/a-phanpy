@@ -56,9 +56,7 @@ function Merged({ title, path, id, ...props }) {
         label: `@${account.info.acct}`,
         fetchPage: async (firstLoad) => {
           if (firstLoad || !iterator) {
-            iterator = masto.v1.timelines.home
-              .list({ limit: LIMIT })
-              .values();
+            iterator = masto.v1.timelines.home.list({ limit: LIMIT }).values();
           }
           const { value, done } = await iterator.next();
           if (!value?.length) return { value: [], done: true };
@@ -92,16 +90,24 @@ function Merged({ title, path, id, ...props }) {
           );
         }
       }
-      merger.current = createMergedTimeline({
-        sources,
-        limit: LIMIT,
-        onSourceError: (sourceID, error) => {
-          console.error('Merged timeline source failed', sourceID, error);
-          setFailures((prev) =>
-            prev.includes(sourceID) ? prev : [...prev, sourceID],
-          );
-        },
-      });
+      // A Telegram-only user (no Mastodon accounts) whose session just broke
+      // would otherwise reach createMergedTimeline with an empty source list,
+      // which throws by design. Surface it as an empty timeline instead of an
+      // error — Timeline already renders emptyText for exactly this shape.
+      if (!sources.length) {
+        merger.current = { next: async () => ({ value: [], done: true }) };
+      } else {
+        merger.current = createMergedTimeline({
+          sources,
+          limit: LIMIT,
+          onSourceError: (sourceID, error) => {
+            console.error('Merged timeline source failed', sourceID, error);
+            setFailures((prev) =>
+              prev.includes(sourceID) ? prev : [...prev, sourceID],
+            );
+          },
+        });
+      }
     }
     const { value, done } = await merger.current.next(firstLoad);
     if (firstLoad && value?.length) {
@@ -131,7 +137,7 @@ function Merged({ title, path, id, ...props }) {
     }
   }
 
-  if (!accounts.length) return null;
+  if (!accounts.length && !hasTelegramSession()) return null;
 
   return (
     <Timeline

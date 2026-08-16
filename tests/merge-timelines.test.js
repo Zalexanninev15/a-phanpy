@@ -9,7 +9,8 @@ import test from 'node:test';
 
 import { createMergedTimeline } from '../src/utils/merge-timelines.js';
 
-const t = (mins) => new Date(Date.UTC(2024, 0, 1, 12, 0) - mins * 60000).toISOString();
+const t = (mins) =>
+  new Date(Date.UTC(2024, 0, 1, 12, 0) - mins * 60000).toISOString();
 
 /** Builds a source that hands out `pages` one call at a time. */
 function fakeSource(id, pages) {
@@ -171,7 +172,9 @@ test('unsorted input from a source does not corrupt the order', async () => {
 
 test('single source behaves like a plain timeline', async () => {
   const merged = createMergedTimeline({
-    sources: [fakeSource('a', [[post('a1', 0), post('a2', 5)], [post('a3', 9)]])],
+    sources: [
+      fakeSource('a', [[post('a1', 0), post('a2', 5)], [post('a3', 9)]]),
+    ],
     limit: 2,
   });
 

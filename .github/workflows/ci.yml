@@ -69,6 +69,15 @@ jobs:
             exit 1
           }
 
+      - name: Standalone Telegram entry point must be reachable
+        run: |
+          grep -rq --include="*.js" "Continue with Telegram" dist/assets/ || {
+            echo "::error::The welcome-screen Telegram entry point is missing."
+            echo "::error::A Telegram-only visitor with no Mastodon account would"
+            echo "::error::have no way to reach /telegram/login at all."
+            exit 1
+          }
+
       - name: Report bundle sizes
         run: |
           {

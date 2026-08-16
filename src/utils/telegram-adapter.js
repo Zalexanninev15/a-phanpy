@@ -47,9 +47,11 @@ function openTagFor(entity, channelUsername) {
   if (cls === 'MessageEntityTextUrl') {
     return `<a href="${escapeHTML(entity.url || '')}" rel="nofollow noopener" target="_blank">`;
   }
-  if (cls === 'MessageEntityUrl') return '<a class="_tg-autolink" rel="nofollow noopener" target="_blank">';
+  if (cls === 'MessageEntityUrl')
+    return '<a class="_tg-autolink" rel="nofollow noopener" target="_blank">';
   if (cls === 'MessageEntityMention') return '<a class="mention _tg-mention">';
-  if (cls === 'MessageEntityHashtag') return '<a class="mention hashtag _tg-hashtag">';
+  if (cls === 'MessageEntityHashtag')
+    return '<a class="mention hashtag _tg-hashtag">';
   return '';
 }
 
