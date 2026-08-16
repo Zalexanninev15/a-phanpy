@@ -5,14 +5,15 @@
 #   CLOUDFLARE_API_TOKEN   (Pages: Edit permission)
 #   CLOUDFLARE_ACCOUNT_ID
 #
-# It is a separate workflow rather than a job inside ci.yml on purpose: a
-# missing secret would otherwise turn every ordinary push red.
+# It is a separate workflow rather than a job inside ci.yml on purpose, and
+# it triggers on workflow_dispatch only (Actions tab -> Deploy -> Run workflow),
+# not on push. Without that, every ordinary push would fail red the moment
+# these two secrets aren't set — which is the normal state until you decide
+# to actually use Cloudflare Pages.
 
 name: Deploy
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:

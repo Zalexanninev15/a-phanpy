@@ -1,4 +1,0 @@
-changelog:
-  exclude:
-    labels:
-      - 'i18n'
